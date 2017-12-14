@@ -1,10 +1,8 @@
 package test.takemetohome.activity;
 
-import android.content.Context;
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.AppCompatTextView;
-import android.util.AttributeSet;
 import android.view.View;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -16,12 +14,15 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import test.takemetohome.R;
 import test.takemetohome.dialog.fragments.SaveMyLocationDialogFragment;
+import test.takemetohome.root.Constants;
+import test.takemetohome.utils.SharedPrefUtil;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 {
 
     private AppCompatTextView tvSaveLocation;
     private GoogleMap mMap;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -33,7 +34,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        setUpUI();
+        if (SharedPrefUtil.getInstance().getBooleanForKey(Constants.getInstance().IS_SHORT_CUT_CREATED))
+        {
+            // redirect to google map.
+            String destinationLat = SharedPrefUtil.getInstance().getStringForKey(Constants.getInstance().DESTINATION_LATITUDE);
+            String destinationLng = SharedPrefUtil.getInstance().getStringForKey(Constants.getInstance().DESTINATION_LONGITUDE);
+
+
+
+        }
+        else
+        {
+            setUpUI();
+        }
     }
 
     private void setUpUI()
@@ -55,7 +68,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
     }
-
 
     /**
      * Manipulates the map once available.
