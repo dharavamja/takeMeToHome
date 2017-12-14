@@ -3,9 +3,6 @@ package test.takemetohome.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import test.takemetohome.R;
-import test.takemetohome.root.MyApp;
-
 /**
  * Created by admin on 14/12/17.
  */
@@ -13,13 +10,13 @@ import test.takemetohome.root.MyApp;
 public class SharedPrefUtil
 {
     private static SharedPrefUtil instance;
+    private static final String SHARED_PREF_MAIN_KEY = "com.test.takeMeToHome.PREFERENCE_FILE_KEY";
     SharedPreferences.Editor prefEditor;
-    private SharedPreferences sharedPreferences;
+    private static SharedPreferences sharedPreferences;
+
 
     private SharedPrefUtil()
     {
-        Context context = MyApp.getInstance().getApplicationContext();
-        sharedPreferences = context.getSharedPreferences(context.getString(R.string.main_app_shared_pref_key), Context.MODE_PRIVATE);
     }
 
     public static SharedPrefUtil getInstance()
@@ -29,6 +26,11 @@ public class SharedPrefUtil
             instance = new SharedPrefUtil();
         }
         return instance;
+    }
+
+    public static void initialize(Context context)
+    {
+        sharedPreferences = context.getSharedPreferences(SHARED_PREF_MAIN_KEY, Context.MODE_PRIVATE);
     }
 
     public synchronized void setStringToSharedPref(String key, String value)

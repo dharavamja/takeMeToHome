@@ -24,4 +24,5 @@ public class Constants
     public final String IS_SHORT_CUT_CREATED = "IS_SHORT_CUT_CREATED";
     public final String DESTINATION_LATITUDE = "DESTINATION_LATITUDE";
     public final String DESTINATION_LONGITUDE = "DESTINATION_LONGITUDE";
+
 }

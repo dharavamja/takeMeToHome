@@ -54,13 +54,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             if (!TextUtils.isEmpty(destinationLat) && !TextUtils.isEmpty(destinationLng))
             {
-                // get current location and make api
+                // get current location and make api call
 
-                double currentLat;
+              /*  double currentLat;
                 double currentLng;
 
 
-                openGoogleMap(currentLat,currentLng, destinationLat, destinationLng);
+                openGoogleMap(currentLat,currentLng, destinationLat, destinationLng);*/
             }
             else
             {
