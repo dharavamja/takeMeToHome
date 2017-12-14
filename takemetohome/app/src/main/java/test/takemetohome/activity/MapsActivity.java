@@ -4,9 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatTextView;
 import android.text.TextUtils;
 import android.view.View;
@@ -22,23 +23,27 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.util.List;
 
 import test.takemetohome.R;
+import test.takemetohome.controller.AndroidLocationController;
 import test.takemetohome.dialog.fragments.SaveMyLocationDialogFragment;
 import test.takemetohome.root.AppSettings;
 import test.takemetohome.root.Constants;
 import test.takemetohome.utils.SharedPrefUtil;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback
 {
 
     private AppCompatTextView tvSaveLocation;
     private GoogleMap mMap;
     private Context context;
+    private AndroidLocationController androidLocationController;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
 
         context = getBaseContext();
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -49,18 +54,51 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if (SharedPrefUtil.getInstance().getBooleanForKey(Constants.getInstance().IS_SHORT_CUT_CREATED))
         {
             // redirect to google map.
-            String destinationLat = SharedPrefUtil.getInstance().getStringForKey(Constants.getInstance().DESTINATION_LATITUDE);
-            String destinationLng = SharedPrefUtil.getInstance().getStringForKey(Constants.getInstance().DESTINATION_LONGITUDE);
+            final String destinationLat = SharedPrefUtil.getInstance().getStringForKey(Constants.getInstance().DESTINATION_LATITUDE);
+            final String destinationLng = SharedPrefUtil.getInstance().getStringForKey(Constants.getInstance().DESTINATION_LONGITUDE);
 
             if (!TextUtils.isEmpty(destinationLat) && !TextUtils.isEmpty(destinationLng))
             {
                 // get current location and make api call
+                androidLocationController = new AndroidLocationController();
+                androidLocationController.setLocationListener(new AndroidLocationController.ILocationListener()
+                {
+                    @Override
+                    public void onLocation(Location location)
+                    {
+                        double currentLat = location.getLatitude();
+                        double currentLng = location.getLongitude();
+                        /*double destLat = Double.valueOf(destinationLat);
+                double destLng = Double.valueOf(destinationLng);*/
 
-              /*  double currentLat;
-                double currentLng;
+
+                        double destLat = 23.2156354;
+                        double destLng = 72.6369415;
 
 
-                openGoogleMap(currentLat,currentLng, destinationLat, destinationLng);*/
+                        openGoogleMap(currentLat, currentLng, destLat, destLng);
+                    }
+
+                    @Override
+                    public void onLocationError()
+                    {
+
+                    }
+
+                    @Override
+                    public void onUserDeniedLocationEnable()
+                    {
+
+                    }
+
+                    @Override
+                    public void onUserDeniedPermission()
+                    {
+
+                    }
+                });
+
+                androidLocationController.getLocation(this);
             }
             else
             {
@@ -70,6 +108,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         else
         {
             setUpUI();
+        }
+
+    }
+
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+
+        if (SharedPrefUtil.getInstance().getBooleanForKey(Constants.getInstance().IS_SHORT_CUT_CREATED))
+        {
+            androidLocationController.getLocation(this);
         }
     }
 
@@ -134,5 +184,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         LatLng sydney = new LatLng(-34, 151);
         mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }

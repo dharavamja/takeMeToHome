@@ -6,4 +6,8 @@
     <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyCqbM4-2Ydb9dJkKKx1s0UoYZgJVrjZJrc</string>
     <string name="dialog_cancel">Cancel</string>
     <string name="dialog_ok">Ok</string>
+    <string name="permission_denied">Permission denied</string>
+    <string name="location_permission_message">Location permission is required to get your current
+        location.Please enable it from settings.
+    </string>
 </resources>

@@ -2,6 +2,8 @@ package test.takemetohome.root;
 
 import android.app.Application;
 
+import com.karumi.dexter.Dexter;
+
 import test.takemetohome.utils.SharedPrefUtil;
 
 /**
@@ -15,5 +17,6 @@ public class MyApp extends Application
     {
         super.onCreate();
         SharedPrefUtil.initialize(this);
+        Dexter.initialize(this);
     }
 }
