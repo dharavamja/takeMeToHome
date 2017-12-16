@@ -16,6 +16,7 @@ import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
+import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.model.LatLng;
 
 import test.takemetohome.R;
@@ -35,6 +36,7 @@ public class SaveMyLocationDialogFragment extends AppCompatDialogFragment
 {
     public static final String TAG = SaveMyLocationDialogFragment.class.getSimpleName();
     private final int PLACE_AUTOCOMPLETE_REQUEST_CODE = 5554;
+    private final int PLACE_PICKER_REQUEST = 1;
     AppButton btnChooseOnMap;
     AppButton btnClose;
 
@@ -76,8 +78,13 @@ public class SaveMyLocationDialogFragment extends AppCompatDialogFragment
             {
                 try
                 {
+                    PlacePicker.IntentBuilder intentBuilder = new PlacePicker.IntentBuilder();
+                    Intent intent = intentBuilder.build(getActivity());
+                    // Start the Intent by requesting a result, identified by a request code.
+                    startActivityForResult(intent, PLACE_PICKER_REQUEST);
+/*
                     Intent intent = new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_OVERLAY).build(getActivity());
-                    getActivity().startActivityForResult(intent, PLACE_AUTOCOMPLETE_REQUEST_CODE);
+                    getActivity().startActivityForResult(intent, PLACE_AUTOCOMPLETE_REQUEST_CODE);*/
                 }
                 catch (GooglePlayServicesRepairableException e)
                 {
@@ -110,6 +117,21 @@ public class SaveMyLocationDialogFragment extends AppCompatDialogFragment
             {
                 switch (requestCode)
                 {
+                    case PLACE_PICKER_REQUEST:
+                    {
+                        Place place = PlaceAutocomplete.getPlace(getContext(), data);
+                        LatLng latLng = place.getLatLng();
+                        double latitude = latLng.latitude;
+                        double longitude = latLng.longitude;
+
+                        SharedPrefUtil.getInstance().setStringToSharedPref(Constants.getInstance().DESTINATION_LATITUDE, String.valueOf(latitude));
+                        SharedPrefUtil.getInstance().setStringToSharedPref(Constants.getInstance().DESTINATION_LONGITUDE, String.valueOf(longitude));
+
+                        Toast.makeText(context, "Destination Address selected!", Toast.LENGTH_LONG).show();
+                        showAddShortCutAlertDialog();
+                        break;
+                    }
+
                     case PLACE_AUTOCOMPLETE_REQUEST_CODE:
                     {
                         Place place = PlaceAutocomplete.getPlace(getContext(), data);
@@ -180,5 +202,6 @@ public class SaveMyLocationDialogFragment extends AppCompatDialogFragment
 
         SharedPrefUtil.getInstance().setBooleanForKey(Constants.getInstance().IS_SHORT_CUT_CREATED, true);
         Toast.makeText(context, "Short cut added to your home screen!!!", Toast.LENGTH_LONG).show();
+        dismiss();
     }
 }

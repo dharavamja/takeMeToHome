@@ -112,17 +112,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     }
 
-    @Override
-    protected void onResume()
-    {
-        super.onResume();
-
-        if (SharedPrefUtil.getInstance().getBooleanForKey(Constants.getInstance().IS_SHORT_CUT_CREATED))
-        {
-            androidLocationController.getLocation(this);
-        }
-    }
-
     private void setUpUI()
     {
         tvSaveLocation = findViewById(R.id.a_main_tv_add_location);
@@ -148,6 +137,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         //String uri = String.format(Locale.ENGLISH, "geo:%f,%f?q=%f,%f", latitude, longitude,latitude, longitude);
         String uri = String.format(AppSettings.getInstance().getLocale(), "http://maps.google.com/maps?saddr=%f,%f&daddr=%f,%f", currentLocationLatitude, currentLocationLongitude, latitude, longitude);
         Intent mapIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+        mapIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         mapIntent.setPackage("com.google.android.apps.maps");
         if (isIntentAvailable(context, mapIntent))
         {
