@@ -29,8 +29,7 @@ import test.takemetohome.root.AppSettings;
 import test.takemetohome.root.Constants;
 import test.takemetohome.utils.SharedPrefUtil;
 
-public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback
-{
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private AppCompatTextView tvSaveLocation;
     private GoogleMap mMap;
@@ -39,11 +38,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-
 
         context = getBaseContext();
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -51,106 +48,85 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        if (SharedPrefUtil.getInstance().getBooleanForKey(Constants.getInstance().IS_SHORT_CUT_CREATED))
-        {
+        if (SharedPrefUtil.getInstance().getBooleanForKey(Constants.getInstance().IS_SHORT_CUT_CREATED)) {
             // redirect to google map.
             final String destinationLat = SharedPrefUtil.getInstance().getStringForKey(Constants.getInstance().DESTINATION_LATITUDE);
             final String destinationLng = SharedPrefUtil.getInstance().getStringForKey(Constants.getInstance().DESTINATION_LONGITUDE);
 
-            if (!TextUtils.isEmpty(destinationLat) && !TextUtils.isEmpty(destinationLng))
-            {
+            if (!TextUtils.isEmpty(destinationLat) && !TextUtils.isEmpty(destinationLng)) {
                 // get current location and make api call
                 androidLocationController = new AndroidLocationController();
-                androidLocationController.setLocationListener(new AndroidLocationController.ILocationListener()
-                {
+                androidLocationController.setLocationListener(new AndroidLocationController.ILocationListener() {
                     @Override
-                    public void onLocation(Location location)
-                    {
+                    public void onLocation(Location location) {
                         double currentLat = location.getLatitude();
                         double currentLng = location.getLongitude();
-                        /*double destLat = Double.valueOf(destinationLat);
-                double destLng = Double.valueOf(destinationLng);*/
+                        double destLat = Double.valueOf(destinationLat);
+                        double destLng = Double.valueOf(destinationLng);
 
-
-                        double destLat = 23.2156354;
-                        double destLng = 72.6369415;
-
+                        /*double destLat = 23.2156354;
+                        double destLng = 72.6369415;*/
 
                         openGoogleMap(currentLat, currentLng, destLat, destLng);
                     }
 
                     @Override
-                    public void onLocationError()
-                    {
+                    public void onLocationError() {
 
                     }
 
                     @Override
-                    public void onUserDeniedLocationEnable()
-                    {
+                    public void onUserDeniedLocationEnable() {
 
                     }
 
                     @Override
-                    public void onUserDeniedPermission()
-                    {
+                    public void onUserDeniedPermission() {
 
                     }
                 });
 
                 androidLocationController.getLocation(this);
-            }
-            else
-            {
+            } else {
                 setUpUI();
             }
-        }
-        else
-        {
+        } else {
             setUpUI();
         }
 
     }
 
-    private void setUpUI()
-    {
+    private void setUpUI() {
         tvSaveLocation = findViewById(R.id.a_main_tv_add_location);
 
         attachListeners();
     }
 
-    private void attachListeners()
-    {
-        tvSaveLocation.setOnClickListener(new View.OnClickListener()
-        {
+    private void attachListeners() {
+        tvSaveLocation.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view)
-            {
+            public void onClick(View view) {
                 SaveMyLocationDialogFragment fragment = new SaveMyLocationDialogFragment();
                 fragment.show(getSupportFragmentManager().beginTransaction(), SaveMyLocationDialogFragment.TAG);
             }
         });
     }
 
-    private void openGoogleMap(double currentLocationLatitude, double currentLocationLongitude, double latitude, double longitude)
-    {
+    private void openGoogleMap(double currentLocationLatitude, double currentLocationLongitude, double latitude, double longitude) {
         //String uri = String.format(Locale.ENGLISH, "geo:%f,%f?q=%f,%f", latitude, longitude,latitude, longitude);
         String uri = String.format(AppSettings.getInstance().getLocale(), "http://maps.google.com/maps?saddr=%f,%f&daddr=%f,%f", currentLocationLatitude, currentLocationLongitude, latitude, longitude);
         Intent mapIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
         mapIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         mapIntent.setPackage("com.google.android.apps.maps");
-        if (isIntentAvailable(context, mapIntent))
-        {
+        if (isIntentAvailable(context, mapIntent)) {
             context.startActivity(mapIntent);
-        }
-        else
-        {
+            finish();
+        } else {
             Toast.makeText(context, "Google Map Not Available!", Toast.LENGTH_SHORT).show();
         }
     }
 
-    public boolean isIntentAvailable(Context ctx, Intent intent)
-    {
+    public boolean isIntentAvailable(Context ctx, Intent intent) {
         final PackageManager mgr = ctx.getPackageManager();
         List<ResolveInfo> list = mgr.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
         return list.size() > 0;
@@ -166,8 +142,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
      * installed Google Play services and returned to the app.
      */
     @Override
-    public void onMapReady(GoogleMap googleMap)
-    {
+    public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
         // Add a marker in Sydney and move the camera
@@ -177,8 +152,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
     }
 }

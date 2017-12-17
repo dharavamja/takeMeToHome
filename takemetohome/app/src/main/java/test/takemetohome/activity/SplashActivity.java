@@ -17,8 +17,6 @@ public class SplashActivity extends AppCompatActivity {
 
     public static final int SPLASH_SCREEN_SHOWTIME_MILLISECONDS = 1000;
 
-
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
